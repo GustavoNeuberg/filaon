@@ -1,0 +1,351 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
+
+:root {
+  --primary: #00c6ff;
+  --secondary: #0072ff;
+  --success: #00c853;
+  --warning: #ffd54f;
+  --danger: #ff5252;
+  --text-light: #ffffff;
+  --text-muted: #bbbbbb;
+  --bg-dark: rgba(0, 0, 0, 0.5);
+  --bg-light: rgba(255, 255, 255, 0.05);
+}
+
+/* === Base Styles === */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: url('assets/bigg.svg') no-repeat center/cover;
+  margin: 0;
+  padding: 1.5rem;
+  min-height: 100vh;
+  color: var(--text-light);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  background: var(--bg-light);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+  animation: fadeInContainer 0.5s ease-out;
+  text-align: center;
+}
+
+header {
+  margin-bottom: 1.5rem;
+}
+
+.logo-container img {
+  display: block;
+  margin: 0 auto 1rem;
+  max-width: 140px;
+  width: 100%;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
+}
+
+h1 {
+  font-size: 2rem;
+  margin: 0.5rem 0;
+  color: var(--text-light);
+}
+
+h2 {
+  font-size: 1.3rem;
+  margin: 0.3rem 0;
+  color: var(--text-muted);
+  font-weight: 300;
+}
+
+/* === Inputs / Fields === */
+input[type="text"],
+input[type="number"],
+input[type="password"],
+textarea {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--text-muted);
+  border-bottom-left-radius: 8px;
+  color: var(--text-light);
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus,
+textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(0, 198, 255, 0.3);
+}
+
+/* === Buttons === */
+.btn {
+  background: linear-gradient(to right, var(--primary), var(--secondary));
+  color: var(--text-light);
+  border: none;
+  padding: 0.9rem 1rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-top: 1rem;
+  animation: fadeInButton 0.5s ease;
+}
+
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 114, 255, 0.4);
+}
+
+.btn:active {
+  transform: scale(0.96);
+}
+
+.btn-destaque {
+  background: linear-gradient(to right, var(--success), #009624);
+}
+
+/* === Animation  === */
+.form-control {
+  position: relative;
+  margin: 20px 0 40px;
+  width: 100%;
+}
+
+.form-control input {
+  background-color: transparent;
+  border: none;
+  border-bottom: 2px solid var(--text-muted);
+  display: block;
+  width: 100%;
+  padding: 15px 0;
+  font-size: 18px;
+  color: var(--text-light);
+  transition: border-color 0.3s ease;
+}
+
+.form-control input:focus,
+.form-control input:valid {
+  outline: none;
+  border-bottom-color: var(--primary);
+}
+
+.form-control label {
+  position: absolute;
+  top: 15px;
+  left: 0;
+  pointer-events: none;
+  display: flex;
+}
+
+.form-control label span {
+  font-size: 18px;
+  color: var(--text-light);
+  transform: translateY(0);
+  transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55),
+              color 0.3s ease;
+}
+
+.form-control input:focus + label span,
+.form-control input:valid + label span {
+  color: var(--primary);
+  transform: translateY(-30px);
+}
+
+
+/* === Queue List === */
+.fila-lista {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  max-height: 300px;
+  overflow-y: auto;
+  animation: fadeInList 0.5s ease;
+}
+
+.fila-lista li {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.fila-lista li:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateX(5px);
+}
+
+.fila-lista .vazia {
+  justify-content: center;
+  color: var(--text-muted);
+}
+
+/* === Current Client === */
+.cliente-atual {
+  background: var(--bg-dark);
+  padding: 1rem;
+  border-radius: 12px;
+  margin: 1.6rem 0;
+  text-align: center;
+  animation: fadeInCliente 0.5s ease;
+}
+
+.cliente-atual h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1.2rem;
+}
+
+.cliente-atual p {
+  margin: 0;
+  font-size: 1.4rem;
+  color: var(--warning);
+  font-weight: 600;
+}
+
+/* === Notifications === */
+.notificacao {
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 8px;
+  display: none;
+  text-align: center;
+}
+
+.notificacao.ativo {
+  display: block;
+  animation: fadeInNotificacao 0.5s ease;
+}
+
+.notificacao.sucesso {
+  background: rgba(0, 200, 83, 0.15);
+  border-left: 4px solid var(--success);
+}
+
+.notificacao.erro {
+  background: rgba(255, 82, 82, 0.15);
+  border-left: 4px solid var(--danger);
+}
+
+/* === Label Letter Animation === */
+label span {
+  display: inline-block;
+  transform: translateY(1rem);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+input:focus + label span,
+input:not(:placeholder-shown) + label span {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* === Animations === */
+@keyframes fadeInContainer {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInButton {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInList {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeInCliente {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInNotificacao {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* === Responsive Design === */
+@media (max-width: 600px) {
+  .container {
+    padding: 1.5rem;
+    max-width: 95%;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+  }
+
+  h2 {
+    font-size: 1.1rem;
+  }
+
+  .btn {
+    padding: 0.8rem;
+    font-size: 0.95rem;
+  }
+
+  .fila-lista li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+}
+
+/* === Dark Mode === */
+@media (prefers-color-scheme: dark) {
+  body {
+    background: url('assets/bigg-dark.svg') no-repeat center/cover;
+  }
+
+  .container {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  input[type="text"],
+  input[type="number"],
+  input[type="password"],
+  textarea {
+    border-bottom: 2px solid var(--text-muted);
+    color: var(--text-light);
+  }
+}
+
+/* === Avisos === */
+.aviso-atendimento {
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+  color: white;
+  padding: 1rem;
+  border-radius: 12px;
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  box-shadow: 0 8px 20px rgba(0, 114, 255, 0.4);
+  animation: fadeInAviso 0.5s ease forwards;
+}
+
+@keyframes fadeInAviso {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

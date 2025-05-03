@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fila Virtual - Barbearia</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="txt">Lista de Espera</h1>
+
+        <!-- Seção de Login -->
+        <div id="login-section">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='assets/logo.svg') }}" alt="Logo da Barbearia" />
+            </div>
+            <h2 class="txt">Entrar na Fila</h2>
+
+            <div class="form-control">
+                <input type="text" id="nome" name="nome" required autocomplete="off" placeholder=" " />
+                <label for="nome">
+                    <span style="transition-delay: 0ms">S</span>
+                    <span style="transition-delay: 50ms">e</span>
+                    <span style="transition-delay: 100ms">u</span>
+                    <span style="transition-delay: 150ms"> </span>
+                    <span style="transition-delay: 200ms">N</span>
+                    <span style="transition-delay: 250ms">o</span>
+                    <span style="transition-delay: 300ms">m</span>
+                    <span style="transition-delay: 350ms">e</span>
+                </label>
+                <small class="error-message" id="nome-error"></small>
+            </div>
+            
+            <div class="form-control">
+                <input type="tel" id="telefone" name="telefone" required autocomplete="off" placeholder=" " />
+                <label for="telefone">
+                    <span style="transition-delay: 0ms">S</span>
+                    <span style="transition-delay: 50ms">e</span>
+                    <span style="transition-delay: 100ms">u</span>
+                    <span style="transition-delay: 150ms"> </span>
+                    <span style="transition-delay: 200ms">T</span>
+                    <span style="transition-delay: 250ms">e</span>
+                    <span style="transition-delay: 300ms">l</span>
+                    <span style="transition-delay: 350ms">e</span>
+                    <span style="transition-delay: 400ms">f</span>
+                    <span style="transition-delay: 450ms">o</span>
+                    <span style="transition-delay: 500ms">n</span>
+                    <span style="transition-delay: 550ms">e</span>
+                </label>
+                <small class="error-message" id="telefone-error"></small>
+            </div>
+            
+            <button id="submit-btn" class="btn">Entrar</button>
+            
+            
+            <button class="btn" onclick="entrarFila()">🚀 Entrar na Fila</button>
+        </div>
+
+        <!-- Seção de Fila -->
+        <div id="fila-section" style="display: none;">
+            <h2 class="txt">Sua Posição na Fila</h2>
+            <div id="posicao-info">
+                <strong>Posição:</strong> <span id="posicao">--</span> de <span id="total">--</span><br>
+                <small><span id="frente">--</span> pessoas à sua frente</small><br>
+                <small>Tempo estimado de espera: <span id="tempo-espera">--</span> minutos</small>
+            </div>
+
+            <div id="notificacao" class="notificacao" style="display: none;"></div>
+            <button class="btn btn-danger" onclick="sairFila()">❌ Sair da Fila</button>
+        </div>
+
+        <!-- Área de Alertas -->
+        <div id="alert" class="alert" style="display: none;"></div>
+    </div>
+</body>
+</html>

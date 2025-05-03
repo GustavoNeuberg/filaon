@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel Barbearia</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+</head>
+<body class="page painel-page">
+
+    <div class="container painel-container">
+        <header class="painel-header">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='assets/logo.svg') }}" alt="Logo da Barbearia" />
+            </div>
+            <h1 class="title">Painel do Barbeiro</h1>
+            <h2 class="subtitle">
+                Clientes na Fila: <span id="total-clientes" class="total-clientes">0</span>
+            </h2>
+        </header>
+
+        <ul id="lista-fila" class="fila-lista">
+            <!-- Lista de clientes renderizada pelo JS -->
+        </ul>
+
+        <button class="btn btn-destaque" onclick="chamarProximo()">📢 Chamar Próximo</button>
+
+        <div id="cliente-atual" class="cliente-atual" style="display: none;">
+            <h3>Cliente em Atendimento</h3>
+            <p id="cliente-atual-nome">--</p>
+        </div>
+
+        <div id="notificacao" class="notificacao" style="display: none;"></div>
+        <div id="alert" class="alert" style="display: none;"></div>
+    </div>
+
+    <script>
+        const socket = io();
+
+        socket.on('atualizar_fila', (fila) => {
+            atualizarFila(fila);
+        });
+
+        function atualizarFila(fila) {
+            const listaFila = document.getElementById('lista-fila');
+            listaFila.innerHTML = '';
+
+            fila.forEach((cliente, index) => {
+                const li = document.createElement('li');
+                li.textContent = `${index + 1}. ${cliente.nome} - ${cliente.telefone}`;
+                listaFila.appendChild(li);
+            });
+
+            document.getElementById('total-clientes').textContent = fila.length;
+        }
+
+        function chamarProximo() {
+            fetch('/chamar-proximo', { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.cliente) {
+                    exibirClienteAtual(data.cliente);
+                    exibirNotificacao(`Chamando ${data.cliente.nome}`);
+                } else {
+                    exibirNotificacao('Não há mais clientes na fila.');
+                }
+            })
+            .catch(() => {
+                exibirNotificacao('Erro ao chamar o próximo cliente.');
+            });
+        }
+
+        function exibirClienteAtual(cliente) {
+            const clienteAtualDiv = document.getElementById('cliente-atual');
+            document.getElementById('cliente-atual-nome').textContent = `${cliente.nome} (${cliente.telefone})`;
+            clienteAtualDiv.style.display = 'block';
+        }
+
+        function exibirNotificacao(mensagem) {
+            const notificacao = document.getElementById('notificacao');
+            notificacao.textContent = mensagem;
+            notificacao.style.display = 'block';
+            notificacao.classList.add('ativo');
+
+            setTimeout(() => {
+                notificacao.classList.remove('ativo');
+                notificacao.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
