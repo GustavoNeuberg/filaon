@@ -112,9 +112,31 @@ def entrar_fila():
                           (telefone, nome, 1, entrada))
 
         emitir_atualizacao_fila()
-        return jsonify({'message': f'{nome}, você entrou na fila!'})
+        app.logger.info(f'{nome} entrou na fila.')
+        return jsonify({'message': f'{nome}, você entrou na fila!', 'cliente_id': cliente_id, 'nome': nome})
     except Exception as e:
         app.logger.error(f"Erro /entrar-fila: {e}")
+        return jsonify({'error': 'Erro no servidor'}), 500
+
+@app.route('/posicao/<cliente_id>')
+def posicao(cliente_id):
+    try:
+        with db_conn() as conn:
+            c = conn.cursor()
+            c.execute('SELECT entrada FROM fila WHERE id = ?', (cliente_id,))
+            cliente = c.fetchone()
+            if not cliente:
+                return jsonify({'error': 'Não está na fila'}), 404
+
+            entrada_cliente = cliente[0]
+            c.execute('SELECT COUNT(*) FROM fila WHERE entrada <= ?', (entrada_cliente,))
+            posicao = c.fetchone()[0]
+            c.execute('SELECT COUNT(*) FROM fila')
+            total = c.fetchone()[0]
+
+        return jsonify({'posicao': posicao, 'total': total})
+    except Exception as e:
+        app.logger.error(f"Erro /posicao/{cliente_id}: {e}")
         return jsonify({'error': 'Erro no servidor'}), 500
 
 @app.route('/proximo', methods=['POST'])
@@ -131,12 +153,10 @@ def proximo():
             cliente_id, nome, telefone, entrada = cliente
             saida = datetime.now().isoformat()
 
-            # Remove da fila e histórico
             c.execute('DELETE FROM fila WHERE id = ?', (cliente_id,))
             c.execute('INSERT INTO historico (id, telefone, nome, entrada, saida) VALUES (?, ?, ?, ?, ?)',
                       (cliente_id, telefone, nome, entrada, saida))
 
-            # Atualiza atendimento atual
             c.execute('DELETE FROM atendimento')
             c.execute('INSERT INTO atendimento (id, telefone, nome, inicio) VALUES (?, ?, ?, ?)',
                       (cliente_id, telefone, nome, saida))
@@ -144,8 +164,8 @@ def proximo():
         socketio.emit('cliente_chamado', {'cliente_id': cliente_id, 'nome': nome})
         emitir_atualizacao_fila()
         emitir_cliente_atual()
-
-        return jsonify({'message': f'{nome} foi chamado para atendimento!'})
+        app.logger.info(f'{nome} foi chamado para atendimento.')
+        return jsonify({'message': f'{nome} foi chamado para atendimento!', 'nome': nome, 'telefone': telefone})
     except Exception as e:
         app.logger.error(f"Erro /proximo: {e}")
         return jsonify({'error': 'Erro no servidor'}), 500
@@ -157,6 +177,7 @@ def sair_fila(cliente_id):
             c = conn.cursor()
             c.execute('DELETE FROM fila WHERE id = ?', (cliente_id,))
         emitir_atualizacao_fila()
+        app.logger.info(f'Cliente {cliente_id} saiu da fila.')
         return jsonify({'message': 'Você saiu da fila.'})
     except Exception as e:
         app.logger.error(f"Erro /sair-fila: {e}")

@@ -20,63 +20,90 @@
             </h2>
         </header>
 
+        <!-- Lista dinâmica de clientes -->
         <ul id="lista-fila" class="fila-lista">
-            <!-- Lista de clientes renderizada pelo JS -->
+            <!-- Populado pelo JS -->
         </ul>
 
+        <!-- Botão para chamar próximo cliente -->
         <button class="btn btn-destaque" onclick="chamarProximo()">📢 Chamar Próximo</button>
 
+        <!-- Área que mostra o cliente atualmente chamado -->
         <div id="cliente-atual" class="cliente-atual" style="display: none;">
             <h3>Cliente em Atendimento</h3>
             <p id="cliente-atual-nome">--</p>
         </div>
 
+        <!-- Notificações e alertas -->
         <div id="notificacao" class="notificacao" style="display: none;"></div>
         <div id="alert" class="alert" style="display: none;"></div>
     </div>
 
     <script>
-        const socket = io();
+        const adminSocket = io();
 
-        socket.on('atualizar_fila', (fila) => {
-            atualizarFila(fila);
-        });
+        // Recebe atualização da fila em tempo real
+        adminSocket.on('atualizar_fila', carregarFila);
 
+        // Função para carregar e atualizar a lista da fila
+        function carregarFila() {
+            fetch('/fila')
+            .then(response => response.json())
+            .then(data => {
+                atualizarFila(data.fila);
+            })
+            .catch(() => {
+                exibirNotificacao('Erro ao carregar fila.');
+            });
+        }
+
+        // Renderiza a lista de clientes no painel
         function atualizarFila(fila) {
             const listaFila = document.getElementById('lista-fila');
             listaFila.innerHTML = '';
 
-            fila.forEach((cliente, index) => {
-                const li = document.createElement('li');
-                li.textContent = `${index + 1}. ${cliente.nome} - ${cliente.telefone}`;
-                listaFila.appendChild(li);
-            });
+            if (fila.length === 0) {
+                listaFila.innerHTML = '<li class="vazia">Nenhum cliente na fila</li>';
+            } else {
+                fila.forEach((cliente, index) => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <span class="posicao">${index + 1}</span>
+                        <span class="nome">${cliente.nome}</span>
+                        <span class="telefone">${cliente.telefone}</span>
+                        <span class="hora">${new Date(cliente.entrada).toLocaleTimeString()}</span>
+                    `;
+                    listaFila.appendChild(li);
+                });
+            }
 
             document.getElementById('total-clientes').textContent = fila.length;
         }
 
+        // Chama próximo cliente
         function chamarProximo() {
-            fetch('/chamar-proximo', { method: 'POST' })
+            fetch('/proximo', { method: 'POST' })
             .then(response => response.json())
             .then(data => {
-                if (data.cliente) {
-                    exibirClienteAtual(data.cliente);
-                    exibirNotificacao(`Chamando ${data.cliente.nome}`);
-                } else {
-                    exibirNotificacao('Não há mais clientes na fila.');
-                }
+                if (data.error) throw new Error(data.error);
+
+                exibirClienteAtual(data);
+                exibirNotificacao(`Chamando ${data.nome}`);
+                carregarFila();
             })
             .catch(() => {
                 exibirNotificacao('Erro ao chamar o próximo cliente.');
             });
         }
 
+        // Exibe cliente atual na tela
         function exibirClienteAtual(cliente) {
             const clienteAtualDiv = document.getElementById('cliente-atual');
             document.getElementById('cliente-atual-nome').textContent = `${cliente.nome} (${cliente.telefone})`;
             clienteAtualDiv.style.display = 'block';
         }
 
+        // Exibe notificação temporária
         function exibirNotificacao(mensagem) {
             const notificacao = document.getElementById('notificacao');
             notificacao.textContent = mensagem;
@@ -88,6 +115,10 @@
                 notificacao.style.display = 'none';
             }, 3000);
         }
+
+        // Inicializa a fila no carregamento
+        carregarFila();
+        setInterval(carregarFila, 10000); // Atualiza a cada 10s
     </script>
 </body>
 </html>

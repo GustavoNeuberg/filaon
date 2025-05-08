@@ -1,7 +1,7 @@
 const socket = io();
 
 // ===============================
-// Cliente - Entrar na fila (Revisado)
+// Cliente - Entrar na fila (Alinhado com backend)
 // ===============================
 function entrarFila() {
     const nomeInput = document.getElementById('nome');
@@ -97,7 +97,7 @@ function atualizarPosicao() {
 
         document.getElementById('posicao').textContent = data.posicao;
         document.getElementById('total').textContent = data.total;
-        document.getElementById('frente').textContent = data.posicao - 1;
+        document.getElementById('frente').textContent = Math.max(0, data.posicao - 1);
 
         const tempoEstimado = Math.max(5, (data.posicao - 1) * 5);
         document.getElementById('tempo-espera').textContent = tempoEstimado;
